@@ -147,7 +147,7 @@ class AuthStore:
         user.refresh_tokens.clear()
         self._async_schedule_save()
 
-    async def async_update_user(
+    def async_update_user(
         self,
         user: models.User,
         name: str | None = None,

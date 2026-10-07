@@ -374,7 +374,7 @@ class AuthManager:
             )
             if value is not None
         }
-        await self._store.async_update_user(user, **kwargs)
+        self._store.async_update_user(user, **kwargs)
 
         if is_active is not None:
             if is_active is True:
