@@ -62,7 +62,7 @@ async def async_fetch_airos_data(
         AirOSDeviceConnectionError,
         TimeoutError,
     ) as err:
-        _LOGGER.error("Error connecting to airOS device: %s", err)
+        _LOGGER.exception("Error connecting to airOS device: %s", err)
         raise UpdateFailed(
             translation_domain=DOMAIN,
             translation_key="cannot_connect",
