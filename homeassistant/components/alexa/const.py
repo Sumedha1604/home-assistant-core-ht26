@@ -7,6 +7,7 @@ from homeassistant.const import UnitOfTemperature
 
 DOMAIN = "alexa"
 EVENT_ALEXA_SMART_HOME = "alexa_smart_home"
+ALEXA_SECURITY_PANEL_CONTROLLER = "Alexa.SecurityPanelController"
 
 # Flash briefing constants
 CONF_UID = "uid"

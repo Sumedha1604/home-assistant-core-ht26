@@ -95,6 +95,7 @@ from homeassistant.core import HomeAssistant, State
 from homeassistant.util import color as color_util, dt as dt_util
 
 from .const import (
+    ALEXA_SECURITY_PANEL_CONTROLLER,
     API_TEMP_UNITS,
     API_THERMOSTAT_MODES,
     API_THERMOSTAT_PRESETS,
@@ -1463,7 +1464,7 @@ class AlexaSecurityPanelController(AlexaCapability):
     @override
     def name(self) -> str:
         """Return the Alexa API name of this interface."""
-        return "Alexa.SecurityPanelController"
+        return ALEXA_SECURITY_PANEL_CONTROLLER
 
     @override
     def properties_supported(self) -> list[dict[str, str]]:

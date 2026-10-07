@@ -5,7 +5,7 @@ from typing import Any, Literal
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 
-from .const import API_TEMP_UNITS
+from .const import ALEXA_SECURITY_PANEL_CONTROLLER, API_TEMP_UNITS
 
 
 class UnsupportedProperty(HomeAssistantError):
@@ -127,14 +127,14 @@ class AlexaBridgeUnreachableError(AlexaError):
 class AlexaSecurityPanelUnauthorizedError(AlexaError):
     """Class to represent SecurityPanelController Unauthorized errors."""
 
-    namespace = "Alexa.SecurityPanelController"
+    namespace = ALEXA_SECURITY_PANEL_CONTROLLER
     error_type = "UNAUTHORIZED"
 
 
 class AlexaSecurityPanelAuthorizationRequired(AlexaError):
     """Class to represent SecurityPanelController AuthorizationRequired errors."""
 
-    namespace = "Alexa.SecurityPanelController"
+    namespace = ALEXA_SECURITY_PANEL_CONTROLLER
     error_type = "AUTHORIZATION_REQUIRED"
 
 
