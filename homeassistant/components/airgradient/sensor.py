@@ -37,6 +37,7 @@ from .coordinator import AirGradientCoordinator
 from .entity import AirGradientEntity
 
 PARALLEL_UPDATES = 0
+PARTICLES_PER_DL = "particles/dL"
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -121,14 +122,14 @@ MEASUREMENT_SENSOR_TYPES: tuple[AirGradientMeasurementSensorEntityDescription, .
     AirGradientMeasurementSensorEntityDescription(
         key="pm003",
         translation_key="pm003_count",
-        native_unit_of_measurement="particles/dL",
+        native_unit_of_measurement=PARTICLES_PER_DL,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda status: status.pm003_count,
     ),
     AirGradientMeasurementSensorEntityDescription(
         key="pm005_count",
         translation_key="pm005_count",
-        native_unit_of_measurement="particles/dL",
+        native_unit_of_measurement=PARTICLES_PER_DL,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
         value_fn=lambda status: status.pm005_count,
@@ -136,7 +137,7 @@ MEASUREMENT_SENSOR_TYPES: tuple[AirGradientMeasurementSensorEntityDescription, .
     AirGradientMeasurementSensorEntityDescription(
         key="pm01_count",
         translation_key="pm01_count",
-        native_unit_of_measurement="particles/dL",
+        native_unit_of_measurement=PARTICLES_PER_DL,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
         value_fn=lambda status: status.pm01_count,
@@ -144,7 +145,7 @@ MEASUREMENT_SENSOR_TYPES: tuple[AirGradientMeasurementSensorEntityDescription, .
     AirGradientMeasurementSensorEntityDescription(
         key="pm02_count",
         translation_key="pm02_count",
-        native_unit_of_measurement="particles/dL",
+        native_unit_of_measurement=PARTICLES_PER_DL,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
         value_fn=lambda status: status.pm02_count,
@@ -152,7 +153,7 @@ MEASUREMENT_SENSOR_TYPES: tuple[AirGradientMeasurementSensorEntityDescription, .
     AirGradientMeasurementSensorEntityDescription(
         key="pm50_count",
         translation_key="pm50_count",
-        native_unit_of_measurement="particles/dL",
+        native_unit_of_measurement=PARTICLES_PER_DL,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
         value_fn=lambda status: status.pm50_count,
@@ -160,7 +161,7 @@ MEASUREMENT_SENSOR_TYPES: tuple[AirGradientMeasurementSensorEntityDescription, .
     AirGradientMeasurementSensorEntityDescription(
         key="pm10_count",
         translation_key="pm10_count",
-        native_unit_of_measurement="particles/dL",
+        native_unit_of_measurement=PARTICLES_PER_DL,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
         value_fn=lambda status: status.pm10_count,
