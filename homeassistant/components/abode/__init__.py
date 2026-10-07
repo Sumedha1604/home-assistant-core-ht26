@@ -68,7 +68,7 @@ class AbodeSystem:
 type AbodeConfigEntry = ConfigEntry[AbodeSystem]
 
 
-async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+async def async_setup(hass: HomeAssistant, _: ConfigType) -> bool:
     """Set up the Abode component."""
     async_setup_services(hass)
     return True
