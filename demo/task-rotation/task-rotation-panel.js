@@ -61,7 +61,7 @@ function readRotation(description) {
       },
       notes: (text.slice(0, start) + text.slice(end + META_END.length)).trim(),
     };
-  } catch (_error) {
+  } catch {
     return {
       rotation: null,
       notes: text.trim(),
@@ -76,7 +76,7 @@ function writeRotation(rotation, notes = "") {
     .join("\n\n");
 }
 
-function el(tag, className = "", text) {
+function el(tag, className, text = undefined) {
   const node = document.createElement(tag);
 
   if (className) {
@@ -456,7 +456,7 @@ class TaskRotationPanel extends HTMLElement {
       const items = response?.response?.[TODO_ENTITY_ID]?.items;
 
       if (!Array.isArray(items)) {
-        throw new Error("Unexpected response from To-do list");
+        throw new TypeError("Unexpected response from To-do list");
       }
 
       this._items = items;
@@ -485,137 +485,130 @@ class TaskRotationPanel extends HTMLElement {
     }
 
     for (const task of this._items) {
-      const { rotation, notes, invalid } = readRotation(task.description);
-
-      const card = el("article", "card");
-
-      card.appendChild(el("h3", "", task.summary || "Unnamed task"));
-
-      card.appendChild(
-        el("p", "muted", task.due ? `Due: ${task.due}` : "No due date"),
-      );
-
-      if (notes && !invalid) {
-        card.appendChild(el("p", "muted", notes));
-      }
-
-      if (invalid) {
-        card.appendChild(
-          el(
-            "p",
-            "error",
-            "This task has invalid rotation metadata. Edit its description before assigning participants.",
-          ),
-        );
-
-        container.appendChild(card);
-        continue;
-      }
-
-      if (rotation) {
-        card.appendChild(
-          el(
-            "p",
-            "person",
-            `Current assignee: ${rotation.people[rotation.index]}`,
-          ),
-        );
-
-        card.appendChild(
-          el("p", "muted", `People: ${rotation.people.join(" → ")}`),
-        );
-
-        card.appendChild(
-          el(
-            "p",
-            "muted",
-            `Turns completed: ${rotation.completed} | Position: ${
-              rotation.index + 1
-            } of ${rotation.people.length}`,
-          ),
-        );
-
-        const progress = el("div", "progress");
-
-        const fill = el("span");
-
-        fill.style.width = `${
-          ((rotation.index + 1) / rotation.people.length) * 100
-        }%`;
-
-        progress.appendChild(fill);
-        card.appendChild(progress);
-
-        const next = el("button", "", "Mark turn completed & rotate");
-
-        next.type = "button";
-        next.style.marginTop = "16px";
-
-        next.addEventListener("click", () => void this.advanceTask(task));
-
-        card.appendChild(next);
-      } else {
-        card.appendChild(el("p", "muted", "No participants assigned yet."));
-      }
-
-      const edit = el(
-        "button",
-        "secondary",
-        rotation ? "Edit participants" : "Assign participants",
-      );
-
-      edit.type = "button";
-
-      edit.style.marginLeft = rotation ? "8px" : "0";
-
-      edit.style.marginTop = "16px";
-
-      card.appendChild(edit);
-
-      const form = el("form", "inline-form");
-
-      form.hidden = true;
-
-      const label = el("label", "", "Participants (comma-separated)");
-
-      const input = el("input");
-
-      input.required = true;
-
-      input.placeholder = "Person A, Person B, Person C";
-
-      input.value = rotation ? rotation.people.join(", ") : "";
-
-      const save = el("button", "", "Save participants");
-
-      save.type = "submit";
-
-      const cancel = el("button", "secondary", "Cancel");
-
-      cancel.type = "button";
-      cancel.style.marginLeft = "8px";
-
-      form.append(label, input, save, cancel);
-
-      card.appendChild(form);
-
-      edit.addEventListener("click", () => {
-        form.hidden = false;
-        input.focus();
-      });
-
-      cancel.addEventListener("click", () => {
-        form.hidden = true;
-      });
-
-      form.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        void this.saveParticipants(task, input.value);
-      });
-
-      container.appendChild(card);
+      container.appendChild(this.renderTask(task));
     }
+  }
+
+  renderTask(task) {
+    const { rotation, notes, invalid } = readRotation(task.description);
+    const card = el("article", "card");
+
+    card.appendChild(el("h3", "", task.summary || "Unnamed task"));
+    card.appendChild(
+      el("p", "muted", task.due ? `Due: ${task.due}` : "No due date"),
+    );
+
+    if (notes && !invalid) {
+      card.appendChild(el("p", "muted", notes));
+    }
+
+    if (invalid) {
+      card.appendChild(
+        el(
+          "p",
+          "error",
+          "This task has invalid rotation metadata. Edit its description before assigning participants.",
+        ),
+      );
+      return card;
+    }
+
+    if (rotation) {
+      this.renderAssignedTask(card, task, rotation);
+    } else {
+      card.appendChild(el("p", "muted", "No participants assigned yet."));
+    }
+
+    this.renderParticipantEditor(card, task, rotation);
+    return card;
+  }
+
+  renderAssignedTask(card, task, rotation) {
+    card.appendChild(
+      el(
+        "p",
+        "person",
+        `Current assignee: ${rotation.people[rotation.index]}`,
+      ),
+    );
+    card.appendChild(
+      el("p", "muted", `People: ${rotation.people.join(" → ")}`),
+    );
+    card.appendChild(
+      el(
+        "p",
+        "muted",
+        `Turns completed: ${rotation.completed} | Position: ${
+          rotation.index + 1
+        } of ${rotation.people.length}`,
+      ),
+    );
+
+    const progress = el("div", "progress");
+    const fill = el("span");
+
+    fill.style.width = `${
+      ((rotation.index + 1) / rotation.people.length) * 100
+    }%`;
+
+    progress.appendChild(fill);
+    card.appendChild(progress);
+
+    const next = el("button", "", "Mark turn completed & rotate");
+
+    next.type = "button";
+    next.style.marginTop = "16px";
+    next.addEventListener("click", () => void this.advanceTask(task));
+    card.appendChild(next);
+  }
+
+  renderParticipantEditor(card, task, rotation) {
+    const edit = el(
+      "button",
+      "secondary",
+      rotation ? "Edit participants" : "Assign participants",
+    );
+
+    edit.type = "button";
+    edit.style.marginLeft = rotation ? "8px" : "0";
+    edit.style.marginTop = "16px";
+    card.appendChild(edit);
+
+    const form = el("form", "inline-form");
+
+    form.hidden = true;
+
+    const label = el("label", "", "Participants (comma-separated)");
+    const input = el("input");
+
+    input.required = true;
+    input.placeholder = "Person A, Person B, Person C";
+    input.value = rotation ? rotation.people.join(", ") : "";
+
+    const save = el("button", "", "Save participants");
+
+    save.type = "submit";
+
+    const cancel = el("button", "secondary", "Cancel");
+
+    cancel.type = "button";
+    cancel.style.marginLeft = "8px";
+    form.append(label, input, save, cancel);
+    card.appendChild(form);
+
+    edit.addEventListener("click", () => {
+      form.hidden = false;
+      input.focus();
+    });
+
+    cancel.addEventListener("click", () => {
+      form.hidden = true;
+    });
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      void this.saveParticipants(task, input.value);
+    });
   }
 
   async saveParticipants(task, input) {
@@ -640,11 +633,11 @@ class TaskRotationPanel extends HTMLElement {
 
     const currentName = rotation?.people[rotation.index];
 
-    const retainedIndex = people.findIndex((person) => person === currentName);
+    const retainedIndex = people.indexOf(currentName);
 
     const next = {
       people,
-      index: retainedIndex >= 0 ? retainedIndex : 0,
+      index: Math.max(retainedIndex, 0),
       completed: rotation?.completed ?? 0,
     };
 
