@@ -14,6 +14,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN
 from .coordinator import ActronAirSystemCoordinator
 
+MANUFACTURER = "Actron Air"
+
 
 def actron_air_command[_EntityT: ActronAirEntity, **_P](
     func: Callable[Concatenate[_EntityT, _P], Coroutine[Any, Any, Any]],
@@ -66,7 +68,7 @@ class ActronAirAcEntity(ActronAirEntity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._serial_number)},
             name=coordinator.data.ac_system.system_name,
-            manufacturer="Actron Air",
+            manufacturer=MANUFACTURER,
             model_id=coordinator.data.ac_system.master_wc_model,
             sw_version=coordinator.data.ac_system.master_wc_firmware_version,
             serial_number=self._serial_number,
@@ -88,7 +90,7 @@ class ActronAirZoneEntity(ActronAirEntity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._zone_identifier)},
             name=zone.title,
-            manufacturer="Actron Air",
+            manufacturer=MANUFACTURER,
             model="Zone",
             suggested_area=zone.title,
             via_device_id=dr.async_get_device_id_by_identifier(
@@ -118,7 +120,7 @@ class ActronAirPeripheralEntity(ActronAirEntity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, peripheral.serial_number)},
             name=f"Sensor {peripheral.serial_number}",
-            manufacturer="Actron Air",
+            manufacturer=MANUFACTURER,
             model=peripheral.device_type,
             serial_number=peripheral.serial_number,
             via_device_id=dr.async_get_device_id_by_identifier(
